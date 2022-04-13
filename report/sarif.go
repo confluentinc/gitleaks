@@ -30,25 +30,46 @@ func getRuns(cfg config.Config, findings []Finding) []Runs {
 }
 
 func getTool(cfg config.Config) Tool {
-	return Tool{
+	tool := Tool{
 		Driver: Driver{
 			Name:            driver,
 			SemanticVersion: version,
 			Rules:           getRules(cfg),
 		},
 	}
+
+	// if this tool has no rules, ensure that it is represented as [] instead of null/nil
+	if hasEmptyRules(tool) {
+		tool.Driver.Rules = make([]Rules, 0)
+	}
+
+	return tool
+}
+
+func hasEmptyRules(tool Tool) bool {
+	return len(tool.Driver.Rules) == 0
 }
 
 func getRules(cfg config.Config) []Rules {
 	// TODO	for _, rule := range cfg.Rules {
 	var rules []Rules
 	for _, rule := range cfg.Rules {
-		rules = append(rules, Rules{
-			ID:   rule.RuleID,
-			Name: rule.Description,
-			Description: ShortDescription{
+		shortDescription := ShortDescription{
+			Text: rule.Description,
+		}
+		if rule.Regex != nil {
+			shortDescription = ShortDescription{
 				Text: rule.Regex.String(),
-			},
+			}
+		} else if rule.Path != nil {
+			shortDescription = ShortDescription{
+				Text: rule.Path.String(),
+			}
+		}
+		rules = append(rules, Rules{
+			ID:          rule.RuleID,
+			Name:        rule.Description,
+			Description: shortDescription,
 		})
 	}
 	return rules
@@ -64,7 +85,7 @@ func messageText(f Finding) string {
 }
 
 func getResults(findings []Finding) []Results {
-	var results []Results
+	results := []Results{}
 	for _, f := range findings {
 		r := Results{
 			Message: Message{
@@ -185,15 +206,4 @@ type Results struct {
 type Runs struct {
 	Tool    Tool      `json:"tool"`
 	Results []Results `json:"results"`
-}
-
-func configToRules(cfg config.Config) []Rules {
-	var rules []Rules
-	for _, rule := range cfg.Rules {
-		rules = append(rules, Rules{
-			ID:   rule.RuleID,
-			Name: rule.Description,
-		})
-	}
-	return rules
 }

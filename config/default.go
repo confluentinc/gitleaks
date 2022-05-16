@@ -59,16 +59,6 @@ title = "gitleaks config"
     tags = ["key", "Github"]
 
 [[rules]]
-    description = "LinkedIn Client ID"
-    regex = '''(?i)linkedin(.{0,20})?(?-i)[0-9a-z]{12}'''
-    tags = ["client", "LinkedIn"]
-
-[[rules]]
-    description = "LinkedIn Secret Key"
-    regex = '''(?i)linkedin(.{0,20})?[0-9a-z]{16}'''
-    tags = ["secret", "LinkedIn"]
-
-[[rules]]
     description = "Slack"
     regex = '''xox[baprs]-([0-9a-zA-Z]{10,48})?'''
     tags = ["key", "Slack"]

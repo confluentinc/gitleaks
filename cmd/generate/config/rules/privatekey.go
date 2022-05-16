@@ -11,13 +11,18 @@ func PrivateKey() *config.Rule {
 	r := config.Rule{
 		Description: "Private Key",
 		RuleID:      "private-key",
-		Regex:       regexp.MustCompile(`(?i)-----\s*?BEGIN[ A-Z0-9_-]*?PRIVATE KEY\s*?-----[\s\S]*?----\s*?END[ A-Z0-9_-]*? PRIVATE KEY\s*?-----`),
-		Keywords:    []string{"-----BEGIN PRIVATE"},
+		Regex:       regexp.MustCompile(`(?i)-----BEGIN[ A-Z0-9_-]{0,100}PRIVATE KEY-----[\s\S-]*KEY----`),
+		Keywords:    []string{"-----BEGIN"},
 	}
 
 	// validate
 	tps := []string{`-----BEGIN PRIVATE KEY-----
 anything
------END PRIVATE KEY-----`} // gitleaks:allow
-	return validate(r, tps)
+-----END PRIVATE KEY-----`,
+		`-----BEGIN RSA PRIVATE KEY-----
+abcdefghijklmnopqrstuvwxyz
+-----END RSA PRIVATE KEY-----
+`,
+	} // gitleaks:allow
+	return validate(r, tps, nil)
 }

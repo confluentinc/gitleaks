@@ -26,6 +26,6 @@ func AWS() *config.Rule {
 	}
 
 	// validate
-	tps := []string{"AWSToken := \"" + "AKIALALEMEL33243OLIB" + "\""} // gitleaks:allow
-	return validate(r, tps)
+	tps := []string{generateSampleSecret("AWS", "AKIALALEMEL33243OLIB")} // gitleaks:allow
+	return validate(r, tps, nil)
 }

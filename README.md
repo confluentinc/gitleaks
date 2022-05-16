@@ -16,6 +16,9 @@
 	  <a href="https://hub.docker.com/r/zricethezav/gitleaks">
 		  <img src="https://img.shields.io/docker/pulls/zricethezav/gitleaks.svg" />
 	  </a>
+	  <a href="https://www.jit.io/jit-open-source-gitleaks?utm_source=github&utm_medium=badge&utm_campaign=GitleaksReadme&utm_id=oss&items=item-secret-detection">
+<img src="https://img.shields.io/badge/Secured%20by-Jit-B8287F?style=?style=plastic" /> 
+	  </a>
 	  <a href="https://twitter.com/intent/follow?screen_name=zricethezav">
 		  <img src="https://img.shields.io/twitter/follow/zricethezav?label=Follow%20zricethezav&style=social&color=blue" alt="Follow @zricethezav" />
 	  </a>
@@ -233,9 +236,9 @@ entropy = 3.5
 # either be part of the idenitifer or unique strings specific to the rule's regex
 # (introduced in v8.6.0)
 keywords = [
-    "auth",
-    "password",
-    "token",
+  "auth",
+  "password",
+  "token",
 ]
 
 # You can include an allowlist table for a single rule to reduce false positives or ignore commits
@@ -244,13 +247,20 @@ keywords = [
 description = "ignore commit A"
 commits = [ "commit-A", "commit-B"]
 paths = [
-	'''go\.mod''',
-	'''go\.sum'''
+  '''go\.mod''',
+  '''go\.sum'''
 ]
 regexes = [
-   	'''process''',
-	'''getenv''',
+  '''process''',
+  '''getenv''',
 ]
+# note: stopwords targets the extracted secret, not the entire regex match
+# like 'regexes' does. (stopwords introduced in 8.8.0)
+stopwords = [
+  '''client''',
+  '''endpoint''',
+]
+
 
 # This is a global allowlist which has a higher order of precedence than rule-specific allowlists.
 # If a commit listed in the `commits` field below is encountered then that commit will be skipped and no
@@ -259,27 +269,31 @@ regexes = [
 description = "global allow list"
 commits = [ "commit-A", "commit-B", "commit-C"]
 paths = [
-	'''gitleaks\.toml''',
-	'''(.*?)(jpg|gif|doc)'''
+  '''gitleaks\.toml''',
+  '''(.*?)(jpg|gif|doc)'''
 ]
 regexes = [
-    	'''219-09-9999''',
-    	'''078-05-1120''',
-    	'''(9[0-9]{2}|666)-\d{2}-\d{4}''',
+  '''219-09-9999''',
+  '''078-05-1120''',
+  '''(9[0-9]{2}|666)-\d{2}-\d{4}''',
+]
+# note: stopwords targets the extracted secret, not the entire regex match
+# like 'regexes' does. (stopwords introduced in 8.8.0)
+stopwords = [
+  '''client''',
+  '''endpoint''',
 ]
 ```
 Refer to the default [gitleaks config](https://github.com/zricethezav/gitleaks/blob/master/config/gitleaks.toml) for examples and advice on writing regular expressions for secret detection.
 
+## Secured by Jit
+We use [Jit](https://www.jit.io/jit-open-source-gitleaks?utm_source=github&utm_medium=readme&utm_campaign=GitleaksReadme&utm_id=oss&items=item-secret-detection) to secure our codebase, to achieve  fully automated, full-stack continuous security using the world's best OSS security tools.
 
 
 ## Sponsorships
 <p align="left">
 	  <a href="https://www.tines.com/?utm_source=oss&utm_medium=sponsorship&utm_campaign=gitleaks">
 		  <img alt="Tines Sponsorship" src="https://user-images.githubusercontent.com/15034943/146411864-4878f936-b4f7-49a0-b625-f9f40c704bfa.png" width=200>
-	  </a>
-	  </p>
-	  <a href="https://www.typeform.com/">
-		  <img src="https://user-images.githubusercontent.com/15034943/146945294-a6473d55-86b8-4f53-941e-7f185ad6b3d7.png" width=200/>
 	  </a>
   </p>
 

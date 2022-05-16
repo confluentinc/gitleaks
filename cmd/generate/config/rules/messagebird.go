@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"github.com/zricethezav/gitleaks/v8/cmd/generate/secrets"
 	"github.com/zricethezav/gitleaks/v8/config"
 )
 
@@ -13,7 +14,7 @@ func MessageBirdAPIToken() *config.Rule {
 			"messagebird",
 			"message-bird",
 			"message_bird",
-		}, alphaNumeric25),
+		}, alphaNumeric("25")),
 		SecretGroup: 1,
 		Keywords: []string{
 			"messagebird",
@@ -24,11 +25,11 @@ func MessageBirdAPIToken() *config.Rule {
 
 	// validate
 	tps := []string{
-		generateSampleSecret("messagebird", sampleAlphaNumeric25Token),
-		generateSampleSecret("message-bird", sampleAlphaNumeric25Token),
-		generateSampleSecret("message_bird", sampleAlphaNumeric25Token),
+		generateSampleSecret("messagebird", secrets.NewSecret(alphaNumeric("25"))),
+		generateSampleSecret("message-bird", secrets.NewSecret(alphaNumeric("25"))),
+		generateSampleSecret("message_bird", secrets.NewSecret(alphaNumeric("25"))),
 	}
-	return validate(r, tps)
+	return validate(r, tps, nil)
 }
 
 func MessageBirdClientID() *config.Rule {
@@ -53,5 +54,5 @@ func MessageBirdClientID() *config.Rule {
 	tps := []string{
 		`const MessageBirdClientID = "12345678-ABCD-ABCD-ABCD-1234567890AB"`, // gitleaks:allow
 	}
-	return validate(r, tps)
+	return validate(r, tps, nil)
 }

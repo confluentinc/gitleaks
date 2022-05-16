@@ -3,6 +3,7 @@ package rules
 import (
 	"regexp"
 
+	"github.com/zricethezav/gitleaks/v8/cmd/generate/secrets"
 	"github.com/zricethezav/gitleaks/v8/config"
 )
 
@@ -16,8 +17,10 @@ func GitHubPat() *config.Rule {
 	}
 
 	// validate
-	tps := []string{"gihubPAT := \"ghp_" + sampleAlphaNumeric36Token + "\""}
-	return validate(r, tps)
+	tps := []string{
+		generateSampleSecret("github", "ghp_"+secrets.NewSecret(alphaNumeric("36"))),
+	}
+	return validate(r, tps, nil)
 }
 
 func GitHubOauth() *config.Rule {
@@ -30,8 +33,10 @@ func GitHubOauth() *config.Rule {
 	}
 
 	// validate
-	tps := []string{"gihubAuth := \"gho_" + sampleAlphaNumeric36Token + "\""}
-	return validate(r, tps)
+	tps := []string{
+		generateSampleSecret("github", "gho_"+secrets.NewSecret(alphaNumeric("36"))),
+	}
+	return validate(r, tps, nil)
 }
 
 func GitHubApp() *config.Rule {
@@ -44,8 +49,11 @@ func GitHubApp() *config.Rule {
 	}
 
 	// validate
-	tps := []string{"gihubAuth := \"ghs_" + sampleAlphaNumeric36Token + "\""}
-	return validate(r, tps)
+	tps := []string{
+		generateSampleSecret("github", "ghu_"+secrets.NewSecret(alphaNumeric("36"))),
+		generateSampleSecret("github", "ghs_"+secrets.NewSecret(alphaNumeric("36"))),
+	}
+	return validate(r, tps, nil)
 }
 
 func GitHubRefresh() *config.Rule {
@@ -58,6 +66,8 @@ func GitHubRefresh() *config.Rule {
 	}
 
 	// validate
-	tps := []string{"gihubAuth := \"ghr_" + sampleAlphaNumeric36Token + "\""}
-	return validate(r, tps)
+	tps := []string{
+		generateSampleSecret("github", "ghr_"+secrets.NewSecret(alphaNumeric("36"))),
+	}
+	return validate(r, tps, nil)
 }

@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 //go:embed gitleaks.toml
@@ -25,15 +26,17 @@ type ViperConfig struct {
 		Tags        []string
 
 		Allowlist struct {
-			Regexes []string
-			Paths   []string
-			Commits []string
+			Regexes   []string
+			Paths     []string
+			Commits   []string
+			StopWords []string
 		}
 	}
 	Allowlist struct {
-		Regexes []string
-		Paths   []string
-		Commits []string
+		Regexes   []string
+		Paths     []string
+		Commits   []string
+		StopWords []string
 	}
 }
 
@@ -43,10 +46,14 @@ type Config struct {
 	Description string
 	Rules       []*Rule
 	Allowlist   Allowlist
+	Keywords    []string
 }
 
 func (vc *ViperConfig) Translate() (Config, error) {
-	var rules []*Rule
+	var (
+		rules    []*Rule
+		keywords []string
+	)
 	for _, r := range vc.Rules {
 		var allowlistRegexes []*regexp.Regexp
 		for _, a := range r.Allowlist.Regexes {
@@ -59,6 +66,10 @@ func (vc *ViperConfig) Translate() (Config, error) {
 
 		if r.Keywords == nil {
 			r.Keywords = []string{}
+		} else {
+			for _, k := range r.Keywords {
+				keywords = append(keywords, strings.ToLower(k))
+			}
 		}
 
 		if r.Tags == nil {
@@ -87,16 +98,16 @@ func (vc *ViperConfig) Translate() (Config, error) {
 			Tags:        r.Tags,
 			Keywords:    r.Keywords,
 			Allowlist: Allowlist{
-				Regexes: allowlistRegexes,
-				Paths:   allowlistPaths,
-				Commits: r.Allowlist.Commits,
+				Regexes:   allowlistRegexes,
+				Paths:     allowlistPaths,
+				Commits:   r.Allowlist.Commits,
+				StopWords: r.Allowlist.StopWords,
 			},
 		}
 		if r.Regex != nil && r.SecretGroup > r.Regex.NumSubexp() {
 			return Config{}, fmt.Errorf("%s invalid regex secret group %d, max regex secret group %d", r.Description, r.SecretGroup, r.Regex.NumSubexp())
 		}
 		rules = append(rules, r)
-
 	}
 	var allowlistRegexes []*regexp.Regexp
 	for _, a := range vc.Allowlist.Regexes {
@@ -110,9 +121,11 @@ func (vc *ViperConfig) Translate() (Config, error) {
 		Description: vc.Description,
 		Rules:       rules,
 		Allowlist: Allowlist{
-			Regexes: allowlistRegexes,
-			Paths:   allowlistPaths,
-			Commits: vc.Allowlist.Commits,
+			Regexes:   allowlistRegexes,
+			Paths:     allowlistPaths,
+			Commits:   vc.Allowlist.Commits,
+			StopWords: vc.Allowlist.StopWords,
 		},
+		Keywords: keywords,
 	}, nil
 }

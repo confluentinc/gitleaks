@@ -3,6 +3,7 @@ package rules
 import (
 	"regexp"
 
+	"github.com/zricethezav/gitleaks/v8/cmd/generate/secrets"
 	"github.com/zricethezav/gitleaks/v8/config"
 )
 
@@ -24,9 +25,9 @@ func SlackAccessToken() *config.Rule {
 
 	// validate
 	tps := []string{
-		"\"slackToken\": \"xoxb-" + sampleHex32Token + "\"",
+		"\"slackToken\": \"xoxb-" + secrets.NewSecret(alphaNumeric("30")) + "\"",
 	}
-	return validate(r, tps)
+	return validate(r, tps, nil)
 }
 
 func SlackWebHook() *config.Rule {
@@ -43,7 +44,7 @@ func SlackWebHook() *config.Rule {
 
 	// validate
 	tps := []string{
-		"https://hooks.slack.com/services/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", // gitleaks:allow
+		"https://hooks.slack.com/services/" + secrets.NewSecret(alphaNumeric("44")), // gitleaks:allow
 	}
-	return validate(r, tps)
+	return validate(r, tps, nil)
 }
